@@ -1,0 +1,28 @@
+{
+  "name": "one-thousand",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "elementary ./index.js",
+    "start:2": "elementary ./index-2.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/digitaIfabric/one-thousand.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/digitaIfabric/one-thousand/issues"
+  },
+  "homepage": "https://github.com/digitaIfabric/one-thousand#readme",
+  "dependencies": {
+    "@elemaudio/core": "^1.0.0-prerelease4",
+    "@elemaudio/offline-renderer": "^1.0.0-prerelease5",
+    "@tonaljs/tonal": "^4.6.5",
+    "tonal": "^2.2.2"
+  }
+}
