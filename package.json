@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "elementary ./index.js",
+    "start": "elementary --trace-uncaught ./index.js",
     "start:2": "elementary ./index-2.js"
   },
   "repository": {
@@ -20,9 +20,25 @@
   },
   "homepage": "https://github.com/digitaIfabric/one-thousand#readme",
   "dependencies": {
-    "@elemaudio/core": "^1.0.0-prerelease4",
-    "@elemaudio/offline-renderer": "^1.0.0-prerelease5",
+    "@elemaudio/core": "^1.0.0",
+    "@elemaudio/offline-renderer": "^1.0.0",
     "@tonaljs/tonal": "^4.6.5",
-    "tonal": "^2.2.2"
-  }
+    "tonal": "^2.2.2",
+    "wavefile": "^11.0.0"
+  },
+  "keywords": [
+    "dirname",
+    "dir",
+    "path",
+    "paths",
+    "file",
+    "built-in",
+    "util",
+    "utils",
+    "core",
+    "stdlib",
+    "ponyfill",
+    "polyfill",
+    "shim"
+  ]
 }
