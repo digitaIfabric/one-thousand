@@ -13,20 +13,18 @@ Object.defineProperty(global, '__dirname', {
 const { WaveFile } = pkg;
 
 let core = new OfflineRenderer();
-let inputFilename = 'clouds.wav';
+let inputFilename = 'Kick.wav';
 
 let gateLoop = el.train(0);
 let VFS = {};
 let inputWav = new WaveFile(fs.readFileSync(__dirname + 'Input/' + inputFilename));
+let numberOfArrayElements = inputWav.getSamples(false, Float32Array)[0].length;
 VFS[`/virtual/path/L-${inputFilename}`] = inputWav.getSamples(false, Float32Array)[0];
 VFS[`/virtual/path/R-${inputFilename}`] = inputWav.getSamples(false, Float32Array)[1];
 
-// let audioL = el.sample({key: 'sl', path: `/virtual/path/L-${inputFilename}`, mode: 'loop', channel: 0, data: null, startOffset: 0, stopOffset: 0}, gateLoop, 1);
-// let audioR = el.sample({key: 'sr', path: `/virtual/path/R-${inputFilename}`, mode: 'loop', channel: 1, data: null, startOffset: 0, stopOffset: 0}, gateLoop, 1);
-
 const directoryPath = path.join(__dirname, 'IRs/');
-let audioL = el.cycle(440);
-let audioR = el.cycle(441);
+let L = el.cycle(440);
+let R = el.cycle(441);
 let data = {};
 let reverbs = [];
 fs.readdir(directoryPath, async (err, filenames) => {
@@ -34,10 +32,6 @@ fs.readdir(directoryPath, async (err, filenames) => {
     data[filename] = new WaveFile(fs.readFileSync(directoryPath + filename));
     VFS[`/virtual/path/L-${filename}`] = data[filename].getSamples(false, Float32Array)[0]; 
     VFS[`/virtual/path/R-${filename}`] = data[filename].getSamples(false, Float32Array)[1];
-    reverbs.push([
-        el.convolve({key: `L-${filename}`, path: `/virtual/path/L-${filename}`}, audioL),
-        el.convolve({key: `R-${filename}`, path: `/virtual/path/L-${filename}`}, audioR)
-    ])
   });
   await core.initialize({
     numInputChannels: 2,
@@ -45,14 +39,24 @@ fs.readdir(directoryPath, async (err, filenames) => {
     sampleRate: 44100,
     virtualFileSystem: VFS
   });
+
+  filenames.forEach((filename) => {
+    reverbs.push([
+      el.convolve({key: `L-${filename}`, path: `/virtual/path/L-${filename}`}, el.sample({key: 'sl', path: `/virtual/path/L-${inputFilename}`, mode: 'gate', channel: 0, data: [null], startOffset: 0, stopOffset: 0}, gateLoop, 1)),
+      el.convolve({key: `R-${filename}`, path: `/virtual/path/R-${filename}`}, el.sample({key: 'sr', path: `/virtual/path/R-${inputFilename}`, mode: 'gate', channel: 1, data: [null], startOffset: 0, stopOffset: 0}, gateLoop, 1))
+    ])
+  });
+
+  console.log(reverbs);
+
   for (let ii = 0; ii < filenames.length; ii++){
     let inps = [
-      new Float32Array(512 * 10),
-      new Float32Array(512 * 10)
+      new Float32Array(numberOfArrayElements),
+      new Float32Array(numberOfArrayElements)
     ];
     let outs = [
-      new Float32Array(512 * 10),
-      new Float32Array(512 * 10)
+      new Float32Array(numberOfArrayElements),
+      new Float32Array(numberOfArrayElements)
     ];
     core.render(reverbs[ii][0], reverbs[ii][1]);
     core.process(inps, outs);
